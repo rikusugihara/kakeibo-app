@@ -26,15 +26,18 @@ function renderTransaction() {
         const li = document.createElement("li");
 
         let typeText;
+        let displayAmount;
         if(transaction.inputType === "expense") {
             li.classList.add("expense");
+            displayAmount = -Math.abs(transaction.inputAmount);
             typeText = "支出";
         } else {
             li.classList.add("income");
+            displayAmount = transaction.inputAmount;
             typeText = "収入";
         }
 
-        li.textContent = `${transaction.inputDate} ${typeText} ${transaction.inputCategory} ${transaction.inputAmount} `;
+        li.textContent = `${transaction.inputDate} ${typeText} ${transaction.inputCategory} ${displayAmount} `;
 
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "削除";
@@ -45,7 +48,7 @@ function renderTransaction() {
             renderTransaction();
         });
 
-        sum += transaction.inputAmount;
+        sum += displayAmount;
 
         li.appendChild(removeBtn);
 
