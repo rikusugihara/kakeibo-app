@@ -11,6 +11,10 @@ const total = document.getElementById("total");
 
 let transactions = [];
 
+function saveTransactions() {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
 function renderTransaction() {
     ul.innerHTML = "";
 
@@ -18,12 +22,14 @@ function renderTransaction() {
 
     transactions.forEach((transaction, index) => {
         const li = document.createElement("li");
-        li.textContent = transaction.inputDate + " " + transaction.inputCategory + " " + transaction.inputAmount + " ";
+        li.textContent = `${transaction.inputDate} ${transaction.inputCategory} ${transaction.inputAmount}`;
 
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "削除";
         removeBtn.addEventListener("click", function() {
             transactions.splice(index, 1);
+
+            saveTransactions();
             renderTransaction();
         });
 
@@ -48,6 +54,7 @@ addBtn.addEventListener("click", function() {
 
     transactions.push({inputDate, inputCategory, inputAmount});
 
+    saveTransactions();
     renderTransaction();
 
     date.value = "";
@@ -55,3 +62,10 @@ addBtn.addEventListener("click", function() {
     amount.value = "";
 });
 
+const saved = localStorage.getItem("transactions");
+
+if(saved !== null) {
+    transactions = JSON.parse(saved);
+}
+
+renderTransaction();
