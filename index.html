@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="style.css">
+
     <title>Document</title>
 </head>
 <body>
     <input type="date" id="date" placeholder="日付を入力">
+    <select id="type">
+        <option value="expense">支出</option>
+        <option value="income">収入</option>
+    </select>
     <input type="text" id="category" placeholder="種別を入力">
     <input type="text" id="amount" placeholder="金額を入力">
+
     <button id="addBtn">追加</button>
 
     <ul></ul>

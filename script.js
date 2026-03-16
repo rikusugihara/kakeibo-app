@@ -6,6 +6,8 @@ const amount = document.getElementById("amount");
 
 const addBtn = document.getElementById("addBtn");
 
+const type = document.getElementById("type");
+
 const total = document.getElementById("total");
 
 
@@ -22,7 +24,17 @@ function renderTransaction() {
 
     transactions.forEach((transaction, index) => {
         const li = document.createElement("li");
-        li.textContent = `${transaction.inputDate} ${transaction.inputCategory} ${transaction.inputAmount}`;
+
+        let typeText;
+        if(transaction.inputType === "expense") {
+            li.classList.add("expense");
+            typeText = "支出";
+        } else {
+            li.classList.add("income");
+            typeText = "収入";
+        }
+
+        li.textContent = `${transaction.inputDate} ${typeText} ${transaction.inputCategory} ${transaction.inputAmount} `;
 
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "削除";
@@ -47,12 +59,13 @@ addBtn.addEventListener("click", function() {
     const inputDate = date.value;
     const inputCategory = category.value;
     const inputAmount = Number(amount.value);
+    const inputType = type.value;
 
     if(inputDate === "" || inputCategory === "") {
         return;
     }
 
-    transactions.push({inputDate, inputCategory, inputAmount});
+    transactions.push({inputDate, inputCategory, inputAmount, inputType});
 
     saveTransactions();
     renderTransaction();
