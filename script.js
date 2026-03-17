@@ -10,6 +10,8 @@ const type = document.getElementById("type");
 
 const total = document.getElementById("total");
 
+const categoryTotal = document.getElementById("categoryTotal");
+
 
 let transactions = [];
 
@@ -19,6 +21,10 @@ function saveTransactions() {
 
 function renderTransaction() {
     ul.innerHTML = "";
+
+    categoryTotal.innerHTML = "";
+
+    let categorySummary = {};
 
     let sum = 0;
 
@@ -48,6 +54,12 @@ function renderTransaction() {
             renderTransaction();
         });
 
+        if(!categorySummary[transaction.inputCategory]) {
+            categorySummary[transaction.inputCategory] = 0;
+        }
+
+        categorySummary[transaction.inputCategory] += displayAmount;
+
         sum += displayAmount;
 
         li.appendChild(removeBtn);
@@ -56,6 +68,13 @@ function renderTransaction() {
     });
 
     total.textContent = `合計: ${sum}円`;
+
+    Object.entries(categorySummary).forEach(([category, amount]) => {
+        const div = document.createElement("div");
+        div.textContent = `${category} ${amount}円`;
+
+        categoryTotal.appendChild(div);
+    })
 }
 
 addBtn.addEventListener("click", function() {
