@@ -12,6 +12,8 @@ const total = document.getElementById("total");
 
 const categoryTotal = document.getElementById("categoryTotal");
 
+const ctx = document.getElementById("myChart").getContext("2d");
+
 
 let transactions = [];
 
@@ -75,6 +77,23 @@ function renderTransaction() {
 
         categoryTotal.appendChild(div);
     })
+
+    const labels = Object.keys(categorySummary);
+    const data = Object.values(categorySummary).map(value => Math.abs(value));
+
+    if(window.pieChart) {
+        window.pieChart.destroy();
+    }
+
+    window.pieChart = new Chart(ctx, {
+        type: "pie",
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data
+            }]
+        }
+    });
 }
 
 addBtn.addEventListener("click", function() {
