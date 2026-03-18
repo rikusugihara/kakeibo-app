@@ -21,27 +21,46 @@ function saveTransactions() {
     localStorage.setItem("transactions", JSON.stringify(transactions));
 }
 
-function renderTransaction() {
-    ul.innerHTML = "";
+function getDisplayAmount(transaction) {
+    if(transaction.inputType === "expense") {
+        return -Math.abs(transaction.inputAmount);
+    }
+    return transaction.inputAmount;
+}
 
+function renderTransaction() {
     categoryTotal.innerHTML = "";
 
-    let categorySummary = {};
+    const result = transactions.reduce((acc, transaction) => {
+        const displayAmount = getDisplayAmount(transaction);
 
-    let sum = 0;
+        if(!acc.categorySummary[transaction.inputCategory]) {
+            acc.categorySummary[transaction.inputCategory] = 0;
+        }
+
+        acc.categorySummary[transaction.inputCategory] += displayAmount;
+
+        acc.sum += displayAmount;
+
+        return acc;
+    }, {
+        sum: 0,
+        categorySummary: {}
+    });
+
+    ul.innerHTML = "";
 
     transactions.forEach((transaction, index) => {
         const li = document.createElement("li");
 
         let typeText;
-        let displayAmount;
+        const displayAmount = getDisplayAmount(transaction);
+
         if(transaction.inputType === "expense") {
             li.classList.add("expense");
-            displayAmount = -Math.abs(transaction.inputAmount);
             typeText = "支出";
         } else {
             li.classList.add("income");
-            displayAmount = transaction.inputAmount;
             typeText = "収入";
         }
 
@@ -56,30 +75,22 @@ function renderTransaction() {
             renderTransaction();
         });
 
-        if(!categorySummary[transaction.inputCategory]) {
-            categorySummary[transaction.inputCategory] = 0;
-        }
-
-        categorySummary[transaction.inputCategory] += displayAmount;
-
-        sum += displayAmount;
-
         li.appendChild(removeBtn);
 
         ul.appendChild(li);
     });
 
-    total.textContent = `合計: ${sum}円`;
+    total.textContent = `合計: ${result.sum}円`;
 
-    Object.entries(categorySummary).forEach(([category, amount]) => {
+    Object.entries(result.categorySummary).forEach(([category, amount]) => {
         const div = document.createElement("div");
         div.textContent = `${category} ${amount}円`;
 
         categoryTotal.appendChild(div);
     })
 
-    const labels = Object.keys(categorySummary);
-    const data = Object.values(categorySummary).map(value => Math.abs(value));
+    const labels = Object.keys(result.categorySummary);
+    const data = Object.values(result.categorySummary).map(value => Math.abs(value));
 
     if(window.pieChart) {
         window.pieChart.destroy();
