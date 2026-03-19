@@ -1,3 +1,7 @@
+body {
+    padding: 20px;
+}
+
 .expense {
     color: red;
 }
@@ -6,8 +10,19 @@
     color: green;
 }
 
+button {
+    padding: 8px 16px;
+    margin-right: 8px;
+    border: none;
+    background-color: #eee;
+    cursor: pointer;
+}
+
 button.active {
     background-color: orange;
     color: white;
-    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.8;
 }
