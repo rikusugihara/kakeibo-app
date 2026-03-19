@@ -1,3 +1,22 @@
+const allBtn = document.getElementById("allBtn");
+const monthBtn = document.getElementById("monthBtn");
+const todayBtn = document.getElementById("todayBtn");
+
+document.getElementById("allBtn").onclick = () => {
+    filterType = "all";
+    renderTransaction();
+};
+
+document.getElementById("monthBtn").onclick = () => {
+    filterType = "month";
+    renderTransaction();
+};
+
+document.getElementById("todayBtn").onclick = () => {
+    filterType = "today";
+    renderTransaction();
+};
+
 const ul = document.querySelector("ul");
 
 const date = document.getElementById("date");
@@ -17,6 +36,8 @@ const ctx = document.getElementById("myChart").getContext("2d");
 
 let transactions = [];
 
+let filterType = "month";
+
 function saveTransactions() {
     localStorage.setItem("transactions", JSON.stringify(transactions));
 }
@@ -28,10 +49,48 @@ function getDisplayAmount(transaction) {
     return transaction.inputAmount;
 }
 
+function updateActiveButton() {
+    allBtn.classList.remove("active");
+    monthBtn.classList.remove("active");
+    todayBtn.classList.remove("active");
+
+    if(filterType === "all") {
+        allBtn.classList.add("active");
+    } else if(filterType === "month") {
+        monthBtn.classList.add("active");
+    } else if(filterType === "today") {
+        todayBtn.classList.add("active");
+    }
+}
+
 function renderTransaction() {
+    updateActiveButton();
     categoryTotal.innerHTML = "";
 
-    const result = transactions.reduce((acc, transaction) => {
+    const today = new Date();
+
+    const filtered = transactions.filter(transaction => {
+        const txDate = new Date(transaction.inputDate);
+
+        if(filterType === "month") {
+            return (
+                txDate.getFullYear() === today.getFullYear() &&
+                txDate.getMonth() === today.getMonth()
+            );
+        }
+
+        if(filterType === "today") {
+            return (
+                txDate.getFullYear() === today.getFullYear() &&
+                txDate.getMonth() === today.getMonth() &&
+                txDate.getDate() === today.getDate()
+            );
+        }
+
+        return true;
+    });
+
+    const result = filtered.reduce((acc, transaction) => {
         const displayAmount = getDisplayAmount(transaction);
 
         if(!acc.categorySummary[transaction.inputCategory]) {
@@ -50,7 +109,7 @@ function renderTransaction() {
 
     ul.innerHTML = "";
 
-    transactions.forEach((transaction, index) => {
+    filtered.forEach((transaction, index) => {
         const li = document.createElement("li");
 
         let typeText;
@@ -69,7 +128,8 @@ function renderTransaction() {
         const removeBtn = document.createElement("button");
         removeBtn.textContent = "削除";
         removeBtn.addEventListener("click", function() {
-            transactions.splice(index, 1);
+            const realIndex = transactions.indexOf(transaction);
+            transactions.splice(realIndex, 1);
 
             saveTransactions();
             renderTransaction();

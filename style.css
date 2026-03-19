@@ -5,3 +5,9 @@
 .income {
     color: green;
 }
+
+button.active {
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+}
